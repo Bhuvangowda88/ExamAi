@@ -8,7 +8,7 @@ interface TitleBarProps {
 export function TitleBar({ isPinned, onTogglePin }: TitleBarProps) {
   return (
     <div className="flex items-center justify-between px-3 py-2 bg-gray-800/80 border-b border-gray-700/50 app-drag">
-      <span className="text-sm font-medium text-gray-300">Quick Notes</span>
+      <span className="text-sm font-medium text-gray-300">Interview Assistant</span>
       <div className="flex items-center gap-1 app-no-drag">
         <button
           onClick={onTogglePin}

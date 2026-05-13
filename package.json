@@ -1,7 +1,7 @@
 {
-  "name": "quick-notes",
+  "name": "interview-assistant",
   "version": "1.0.0",
-  "description": "A simple notes application",
+  "description": "A desktop interview assistant",
   "main": "out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev",
@@ -32,7 +32,7 @@
   },
   "build": {
     "appId": "com.quicknotes.app",
-    "productName": "Quick Notes",
+    "productName": "Interview Assistant",
     "files": ["out/**/*"],
     "directories": {"output": "release"},
     "mac": {"target": "dmg"},

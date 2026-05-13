@@ -20,6 +20,10 @@ body {
   user-select: none;
 }
 
+input, textarea {
+  user-select: text;
+}
+
 .app-drag {
   -webkit-app-region: drag;
 }

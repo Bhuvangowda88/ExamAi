@@ -77,9 +77,9 @@ export function useSpeechRecognition({ onResult, language = 'en-US' }: UseSpeech
       if (event.error === 'no-speech' || event.error === 'aborted') return
 
       if (event.error === 'network') {
-        setError('Speech recognition network error. Check internet and allow microphone access in macOS Privacy settings.')
+        setError('Speech recognition network error. Check internet connection and allow microphone access in Windows Settings > Privacy > Microphone.')
       } else if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-        setError('Microphone access denied. Enable it in macOS System Settings > Privacy & Security > Microphone.')
+        setError('Microphone access denied. Enable it in Windows Settings > Privacy > Microphone.')
       } else {
         setError(`Speech recognition error: ${event.error}`)
       }

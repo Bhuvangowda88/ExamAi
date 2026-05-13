@@ -9,9 +9,12 @@ This app helps you capture interview questions (voice or typed input) and genera
 - Floating always-on-top desktop window
 - Voice input using Web Speech API
 - Text input mode with manual Generate Answer action
-- Gemini answer generation through Electron IPC (main process)
+- Streaming Gemini answers through Electron IPC (main process)
 - Frameless compact UI with pin, hide, opacity, and tray controls
 - Global keyboard shortcuts for quick use
+- Answer modes (format, tone, length) with follow-up questions
+- Profile context (resume, job description, company notes)
+- History panel for past Q/A reuse
 - macOS DMG build support
 
 ## Tech Stack
@@ -53,7 +56,7 @@ This app helps you capture interview questions (voice or typed input) and genera
 
    VITE_GEMINI_API_KEY=YOUR_GEMINI_API_KEY
 
-   You can also set or override the key from the in-app Settings panel. It is stored in localStorage.
+   You can also set or override the key from the in-app Settings panel. The app stores it securely when OS encryption is available.
 
 ## Run in Development
 
@@ -99,7 +102,9 @@ Artifacts are placed in release/.
 
 Main process uses:
 
-- gemini-2.5-flash
+- gemini-2.5-flash (default)
+
+You can override the model in Settings.
 
 If you change model names in code, ensure the model exists for your account and supports generateContent.
 
@@ -142,7 +147,7 @@ If generation fails with auth/key errors:
 
 ## Security Notes
 
-- API key entered in Settings is stored locally in browser localStorage.
+- API key entered in Settings is stored locally and encrypted with OS secure storage when available.
 - Do not commit personal keys to public repositories.
 
 ## Scripts

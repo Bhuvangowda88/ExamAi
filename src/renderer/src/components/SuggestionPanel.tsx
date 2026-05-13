@@ -33,9 +33,14 @@ export function SuggestionPanel({ suggestion, isGenerating }: SuggestionPanelPro
       </div>
       <div className="h-[calc(100%-24px)] overflow-y-auto bg-gray-800/50 rounded-lg p-3 border border-gray-700/30">
         {isGenerating ? (
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-            <span className="text-sm text-gray-400">Generating response...</span>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+              <span className="text-sm text-gray-400">Generating response...</span>
+            </div>
+            {suggestion && (
+              <p className="text-sm text-gray-200 leading-relaxed whitespace-pre-wrap">{suggestion}</p>
+            )}
           </div>
         ) : suggestion ? (
           <p className="text-sm text-gray-200 leading-relaxed whitespace-pre-wrap">{suggestion}</p>
