@@ -17,12 +17,7 @@ export function CodingPanel({
   isGenerating,
   statusMessage
 }: CodingPanelProps) {
-  const normalizeLine = (line: string) => line.replace(/^[-•\s]+/, '').trim()
-  const lines = hintText
-    ? hintText.split(/\n+/).map(normalizeLine).filter(Boolean)
-    : []
-
-  const bulletItems = lines.length ? lines : hintText ? [hintText.trim()] : []
+  const isStructured = Boolean(hintText && (/^##\s/m.test(hintText) || /```/.test(hintText)))
 
   return (
     <div className="flex flex-col gap-4 flex-1 min-h-0">
@@ -73,15 +68,12 @@ export function CodingPanel({
             )}
           </div>
           <div className="flex-1 min-h-0 overflow-y-auto pr-1">
-            {bulletItems.length > 0 ? (
-              <ul className="space-y-3">
-                {bulletItems.map((line, idx) => (
-                  <li key={`${line}-${idx}`} className="flex gap-3 text-sm text-slate-100 leading-relaxed stream-in">
-                    <span className="mt-2 h-1.5 w-1.5 rounded-full bg-violet-300/80" />
-                    <span className="flex-1 whitespace-pre-wrap">{line}</span>
-                  </li>
-                ))}
-              </ul>
+            {isStructured && hintText ? (
+              <pre className="whitespace-pre-wrap text-sm text-slate-100 leading-relaxed font-sans stream-in">
+                {hintText}
+              </pre>
+            ) : hintText ? (
+              <p className="text-sm text-slate-100 leading-relaxed whitespace-pre-wrap stream-in">{hintText}</p>
             ) : (
               <p className="text-sm text-slate-500 italic">
                 Enable scan to generate coding guidance and complexity notes.

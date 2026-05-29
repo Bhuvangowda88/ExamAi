@@ -447,9 +447,9 @@ function App() {
 
     try {
       const options: GenerationOptions = {
-        format: answerSettings.format,
+        format: activeMode === 'behavioral' ? 'direct' : answerSettings.format,
         tone: answerSettings.tone,
-        length: answerSettings.length,
+        length: activeMode === 'behavioral' ? 'short' : answerSettings.length,
         followUps: answerSettings.followUps,
         mode: activeMode,
         model: answerSettings.model?.trim() || undefined,

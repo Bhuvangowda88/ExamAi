@@ -11,11 +11,13 @@ export function SuggestionPanel({ suggestion, isGenerating }: SuggestionPanelPro
 
   const normalizeLine = (line: string) => line.replace(/^[-•\s]+/, '').trim()
 
-  const lines = suggestion
+  const isStructured = Boolean(suggestion && (/^##\s/m.test(suggestion) || /```/.test(suggestion)))
+
+  const lines = suggestion && !isStructured
     ? suggestion.split(/\n+/).map(normalizeLine).filter(Boolean)
     : []
 
-  const bulletItems = lines.length ? lines : suggestion ? [suggestion.trim()] : []
+  const bulletItems = lines.length ? lines : !isStructured && suggestion ? [suggestion.trim()] : []
 
   const handleCopy = () => {
     if (suggestion) {
@@ -47,7 +49,11 @@ export function SuggestionPanel({ suggestion, isGenerating }: SuggestionPanelPro
           </div>
         )}
 
-        {bulletItems.length > 0 ? (
+        {isStructured && suggestion ? (
+          <pre className="whitespace-pre-wrap text-sm text-slate-100 leading-relaxed font-sans stream-in">
+            {suggestion}
+          </pre>
+        ) : bulletItems.length > 0 ? (
           <ul className="space-y-3">
             {bulletItems.map((line, idx) => (
               <li key={`${line}-${idx}`} className="flex gap-3 text-sm text-slate-100 leading-relaxed stream-in">
