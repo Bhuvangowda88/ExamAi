@@ -13,7 +13,7 @@ export async function generateAnswer({ transcript, apiKey, requestId, options, o
   if (!transcript.trim()) throw new Error('No transcript')
 
   if (!window.electronAPI?.generateAnswer) {
-    throw new Error('Gemini bridge unavailable - restart the app')
+    throw new Error('LLM bridge unavailable - restart the app')
   }
 
   let unsubscribe: (() => void) | null = null
@@ -30,8 +30,8 @@ export async function generateAnswer({ transcript, apiKey, requestId, options, o
     return result
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error)
-    console.error('Gemini IPC call failed:', msg)
-    throw new Error(`Gemini generation failed: ${msg}`)
+    console.error('LLM IPC call failed:', msg)
+    throw new Error(`LLM generation failed: ${msg}`)
   } finally {
     if (unsubscribe) unsubscribe()
   }

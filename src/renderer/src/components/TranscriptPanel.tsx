@@ -1,68 +1,90 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface TranscriptPanelProps {
   transcript: string
   interimTranscript: string
+  isEditMode?: boolean
+  onEditModeChange?: (value: boolean) => void
   onTranscriptChange?: (text: string) => void
   onGenerate?: () => void
   isGenerating?: boolean
 }
 
-export function TranscriptPanel({ transcript, interimTranscript, onTranscriptChange, onGenerate, isGenerating }: TranscriptPanelProps) {
-  const [isEditMode, setIsEditMode] = useState(false)
+export function TranscriptPanel({
+  transcript,
+  interimTranscript,
+  isEditMode,
+  onEditModeChange,
+  onTranscriptChange,
+  onGenerate,
+  isGenerating
+}: TranscriptPanelProps) {
+  const [localEditMode, setLocalEditMode] = useState(false)
   const [editText, setEditText] = useState(transcript)
 
-  const handleSwitchMode = () => {
-    if (isEditMode) {
-      onTranscriptChange?.(editText)
-    } else {
+  const editMode = isEditMode ?? localEditMode
+
+  const setEditMode = (next: boolean) => {
+    onEditModeChange?.(next)
+    if (!onEditModeChange) {
+      setLocalEditMode(next)
+    }
+  }
+
+  useEffect(() => {
+    if (!editMode) {
       setEditText(transcript)
     }
-    setIsEditMode(!isEditMode)
+  }, [editMode, transcript])
+
+  const handleConfirm = () => {
+    onTranscriptChange?.(editText)
+    setEditMode(false)
+    setTimeout(() => onGenerate?.(), 0)
   }
 
   return (
-    <div className="flex-1 min-h-[100px] max-h-[180px] overflow-hidden flex flex-col">
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-xs font-medium text-gray-400">Question {isEditMode ? '(Edit)' : ''}</span>
-        <button
-          onClick={handleSwitchMode}
-          className="ml-auto text-xs px-2 py-1 rounded bg-gray-700 hover:bg-gray-600 text-gray-300"
-        >
-          {isEditMode ? 'Done' : 'Type'}
-        </button>
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.2em] text-slate-500">
+        <span>Incoming question</span>
+        {editMode && (
+          <button
+            onClick={() => setEditMode(false)}
+            className="text-[10px] text-slate-400 hover:text-slate-200 transition-colors"
+          >
+            Cancel
+          </button>
+        )}
       </div>
-      {isEditMode ? (
-        <div className="flex flex-col gap-2 flex-1">
+
+      {editMode ? (
+        <div className="flex flex-col gap-2">
           <textarea
             value={editText}
             onChange={(e) => setEditText(e.target.value)}
-            placeholder="Type your interview question here..."
-            className="flex-1 w-full p-2 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none"
+            placeholder="Type or paste the question..."
+            className="min-h-[90px] w-full rounded-xl bg-slate-900/60 border border-slate-700/60 p-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-400/60 resize-none"
           />
           <button
-            onClick={() => {
-              onTranscriptChange?.(editText)
-              setTimeout(() => onGenerate?.(), 0)
-            }}
+            onClick={handleConfirm}
             disabled={!editText.trim() || isGenerating}
-            className="w-full py-1.5 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white text-xs font-medium rounded-lg transition-colors"
+            className="w-full py-2 rounded-xl bg-emerald-500/80 hover:bg-emerald-500 text-white text-xs font-semibold tracking-wide disabled:opacity-50 transition-colors"
           >
-            {isGenerating ? 'Generating...' : 'Generate Answer'}
+            {isGenerating ? 'Streaming...' : 'Send to Copilot'}
           </button>
         </div>
       ) : (
-        <div className="h-[calc(100%-24px)] overflow-y-auto bg-gray-800/50 rounded-lg p-3 border border-gray-700/30">
+        <div className="rounded-xl bg-slate-950/50 border border-slate-700/40 p-3 min-h-[80px]">
           {transcript || interimTranscript ? (
-            <p className="text-sm text-gray-200 leading-relaxed">
+            <p className="text-sm text-slate-200 leading-relaxed stream-in">
               {transcript}
               {interimTranscript && (
-                <span className="text-gray-400 italic"> {interimTranscript}</span>
+                <span className="text-slate-400 italic"> {interimTranscript}</span>
               )}
             </p>
           ) : (
-            <p className="text-sm text-gray-500 italic">
-              Click "Start" to speak or "Type" to enter text...
+            <p className="text-sm text-slate-500 italic">
+              Listening for the next question...
             </p>
           )}
         </div>

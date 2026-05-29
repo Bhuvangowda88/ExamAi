@@ -9,6 +9,14 @@ interface SuggestionPanelProps {
 export function SuggestionPanel({ suggestion, isGenerating }: SuggestionPanelProps) {
   const [copied, setCopied] = useState(false)
 
+  const normalizeLine = (line: string) => line.replace(/^[-•\s]+/, '').trim()
+
+  const lines = suggestion
+    ? suggestion.split(/\n+/).map(normalizeLine).filter(Boolean)
+    : []
+
+  const bulletItems = lines.length ? lines : suggestion ? [suggestion.trim()] : []
+
   const handleCopy = () => {
     if (suggestion) {
       navigator.clipboard.writeText(suggestion)
@@ -18,37 +26,41 @@ export function SuggestionPanel({ suggestion, isGenerating }: SuggestionPanelPro
   }
 
   return (
-    <div className="flex-1 min-h-[120px] overflow-hidden">
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-medium text-gray-400">Suggested Answer</span>
+    <div className="flex-1 min-h-0 flex flex-col gap-2">
+      <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.2em] text-slate-500">
+        <span>Copilot stream</span>
         {suggestion && (
           <button
             onClick={handleCopy}
-            className="flex items-center gap-1 px-2 py-1 text-xs rounded hover:bg-gray-700/50 text-gray-400 hover:text-gray-200 transition-colors"
+            className="flex items-center gap-1 px-2 py-1 text-[10px] rounded-full hover:bg-white/10 text-slate-300 hover:text-white transition-colors"
           >
             {copied ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
             {copied ? 'Copied!' : 'Copy'}
           </button>
         )}
       </div>
-      <div className="h-[calc(100%-24px)] overflow-y-auto bg-gray-800/50 rounded-lg p-3 border border-gray-700/30">
-        {isGenerating ? (
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-              <span className="text-sm text-gray-400">Generating response...</span>
-            </div>
-            {suggestion && (
-              <p className="text-sm text-gray-200 leading-relaxed whitespace-pre-wrap">{suggestion}</p>
-            )}
+      <div className="flex-1 min-h-0 overflow-y-auto rounded-xl bg-slate-950/50 border border-slate-700/40 p-4">
+        {isGenerating && !suggestion && (
+          <div className="flex items-center gap-2 text-sm text-slate-400">
+            <div className="w-4 h-4 border-2 border-violet-400 border-t-transparent rounded-full animate-spin" />
+            <span>Streaming response...</span>
           </div>
-        ) : suggestion ? (
-          <p className="text-sm text-gray-200 leading-relaxed whitespace-pre-wrap">{suggestion}</p>
-        ) : (
-          <p className="text-sm text-gray-500 italic">
-            AI-generated answer suggestions will appear here...
-          </p>
         )}
+
+        {bulletItems.length > 0 ? (
+          <ul className="space-y-3">
+            {bulletItems.map((line, idx) => (
+              <li key={`${line}-${idx}`} className="flex gap-3 text-sm text-slate-100 leading-relaxed stream-in">
+                <span className="mt-2 h-1.5 w-1.5 rounded-full bg-violet-300/80" />
+                <span className="flex-1 whitespace-pre-wrap">{line}</span>
+              </li>
+            ))}
+          </ul>
+        ) : !isGenerating ? (
+          <p className="text-sm text-slate-500 italic">
+            Awaiting the next response...
+          </p>
+        ) : null}
       </div>
     </div>
   )
